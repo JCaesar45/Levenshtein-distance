@@ -1,0 +1,943 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Luxury high-conversion front-end with lead scoring and multi-language backend intake scaffolding."
+    />
+    <meta name="theme-color" content="#08080c" />
+    <title>Belfort Luxe Conversion Engine</title>
+
+    <style>
+      :root {
+        --bg: #08080c;
+        --panel: rgba(20, 20, 29, 0.72);
+        --ink: #f6efe3;
+        --muted: #c9c1b2;
+        --gold: #d3a94f;
+        --gold-2: #f3dd9d;
+        --line: rgba(211, 169, 79, 0.24);
+        --shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+        --radius: 22px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        color: var(--ink);
+        background:
+          radial-gradient(
+            circle at 12% 18%,
+            rgba(211, 169, 79, 0.14),
+            transparent 32%
+          ),
+          radial-gradient(
+            circle at 88% 12%,
+            rgba(120, 63, 17, 0.22),
+            transparent 30%
+          ),
+          radial-gradient(
+            circle at 50% 110%,
+            rgba(211, 169, 79, 0.08),
+            transparent 36%
+          ),
+          linear-gradient(135deg, #050508 0%, #0d0d14 48%, #15101a 100%);
+        font-family:
+          "Avenir Next", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+        line-height: 1.65;
+        overflow-x: hidden;
+      }
+
+      .skip-link {
+        position: absolute;
+        left: -999px;
+        top: auto;
+      }
+
+      .skip-link:focus {
+        left: 12px;
+        top: 12px;
+        z-index: 20;
+        background: #000;
+        color: #fff;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+      }
+
+      #luxCanvas {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        opacity: 0.55;
+      }
+
+      .site-header,
+      main,
+      .footer {
+        position: relative;
+        z-index: 1;
+      }
+
+      .site-header {
+        position: fixed;
+        inset: 0 0 auto 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 18px;
+        padding: 18px 4vw;
+        -webkit-backdrop-filter: blur(18px);
+        backdrop-filter: blur(18px);
+        background: linear-gradient(rgba(7, 7, 10, 0.82), rgba(7, 7, 10, 0.35));
+        border-bottom: 1px solid var(--line);
+        z-index: 10;
+      }
+
+      .brand {
+        font-family:
+          "Didot", "Bodoni MT", "Playfair Display", "Times New Roman", serif;
+        letter-spacing: 0.32em;
+        font-weight: 700;
+        color: var(--gold);
+      }
+
+      .site-header nav {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+
+      .site-header a {
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 0.92rem;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+      }
+
+      .site-header a:hover {
+        color: var(--gold-2);
+      }
+
+      main {
+        width: min(1200px, 92vw);
+        margin: 0 auto;
+        padding: 128px 0 48px;
+      }
+
+      .hero {
+        min-height: 88vh;
+        display: grid;
+        align-content: center;
+        gap: 28px;
+        padding-top: 56px;
+      }
+
+      .eyebrow {
+        margin: 0;
+        color: var(--gold);
+        text-transform: uppercase;
+        letter-spacing: 0.34em;
+        font-size: 0.78rem;
+      }
+
+      h1,
+      h2 {
+        font-family:
+          "Didot", "Bodoni MT", "Playfair Display", "Times New Roman", serif;
+        letter-spacing: 0.02em;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(2.8rem, 7vw, 6.2rem);
+        line-height: 0.98;
+      }
+
+      .gradient-text {
+        background: linear-gradient(90deg, #fff2c8, var(--gold), #b07c22);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      .subhead {
+        max-width: 760px;
+        color: var(--muted);
+        font-size: 1.08rem;
+        margin: 0;
+      }
+
+      .cta-row {
+        display: flex;
+        gap: 18px;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        border: 0;
+        cursor: pointer;
+        border-radius: 999px;
+        padding: 1rem 1.8rem;
+        font-size: 0.95rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        transition:
+          transform 0.18s ease,
+          box-shadow 0.18s ease,
+          background 0.18s ease;
+      }
+
+      .btn:focus-visible,
+      a:focus-visible,
+      input:focus-visible,
+      select:focus-visible,
+      textarea:focus-visible {
+        outline: 3px solid rgba(211, 169, 79, 0.85);
+        outline-offset: 3px;
+      }
+
+      .btn-primary {
+        color: #231600;
+        background: linear-gradient(135deg, #f8e7b2, var(--gold) 48%, #9d6d17);
+        box-shadow: 0 14px 34px rgba(211, 169, 79, 0.24);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px) scale(1.015);
+      }
+
+      .btn-ghost {
+        color: var(--ink);
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid var(--line);
+      }
+
+      .btn-ghost:hover {
+        transform: translateY(-2px);
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .proof {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+        margin: 26px 0 0;
+        padding: 0;
+      }
+
+      .proof div {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 20px;
+        box-shadow: var(--shadow);
+      }
+
+      .proof dt {
+        color: var(--gold);
+        font-size: 1.6rem;
+        font-weight: 700;
+      }
+
+      .proof dd {
+        margin: 8px 0 0;
+        color: var(--muted);
+      }
+
+      .section {
+        margin-top: 96px;
+      }
+
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 28px;
+      }
+
+      .panel p {
+        color: var(--muted);
+      }
+
+      .section h2 {
+        margin: 0 0 18px;
+        font-size: clamp(2rem, 4vw, 3.4rem);
+      }
+
+      .structure pre {
+        margin: 0;
+        white-space: pre-wrap;
+        color: #efe4c8;
+        background: rgba(0, 0, 0, 0.28);
+        padding: 22px;
+        border-radius: 16px;
+        overflow: auto;
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .field {
+        display: grid;
+        gap: 8px;
+      }
+
+      .field label {
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-size: 0.8rem;
+        color: var(--muted);
+      }
+
+      .field input,
+      .field select,
+      .field textarea {
+        width: 100%;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(8, 8, 12, 0.72);
+        color: var(--ink);
+        padding: 0.95rem 1rem;
+        border-radius: 14px;
+        font: inherit;
+      }
+
+      .field textarea {
+        min-height: 130px;
+        resize: vertical;
+      }
+
+      .field input:hover,
+      .field select:hover,
+      .field textarea:hover {
+        border-color: var(--line);
+      }
+
+      .full {
+        grid-column: 1 / -1;
+      }
+
+      .checkbox {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        color: var(--muted);
+      }
+
+      .checkbox input {
+        width: 18px;
+        height: 18px;
+        margin-top: 3px;
+        accent-color: var(--gold);
+      }
+
+      .result {
+        display: block;
+        margin-top: 22px;
+        padding: 18px 20px;
+        border-radius: 16px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.03);
+        color: var(--ink);
+        min-height: 3.5rem;
+      }
+
+      .result.hot {
+        border-color: rgba(243, 221, 157, 0.7);
+        box-shadow: 0 0 35px rgba(211, 169, 79, 0.16);
+      }
+
+      .result.warm {
+        border-color: rgba(211, 169, 79, 0.45);
+      }
+
+      .result.cold {
+        border-color: rgba(148, 163, 184, 0.35);
+      }
+
+      .footer {
+        padding: 40px 4vw 60px;
+        color: var(--muted);
+        border-top: 1px solid var(--line);
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+
+      .reveal {
+        opacity: 0;
+        transform: translateY(18px);
+        transition:
+          opacity 0.7s ease,
+          transform 0.7s ease;
+      }
+
+      .reveal.visible {
+        opacity: 1;
+        transform: none;
+      }
+
+      @media (max-width: 900px) {
+        .proof,
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+
+        main {
+          padding-top: 116px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+
+        * {
+          animation: none !important;
+          transition: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <canvas id="luxCanvas" aria-hidden="true"></canvas>
+
+    <header class="site-header">
+      <div class="brand">BELFORT LUXE</div>
+      <nav aria-label="Primary">
+        <a href="#product">Product</a>
+        <a href="#process">Process</a>
+        <a href="#lead-form">Contact</a>
+      </nav>
+    </header>
+
+    <main id="main">
+      <section class="hero" aria-label="Introduction">
+        <p class="eyebrow reveal">
+          Independent contractor frontend revenue systems
+        </p>
+
+        <h1 class="reveal">
+          <span class="gradient-text">Sell the Status.</span>
+          <br />
+          Ship the Interface That Closes.
+        </h1>
+
+        <p class="subhead reveal">
+          A luxury conversion engine for premium offers: cinematic front-end,
+          behavioral lead scoring, productized architecture, and multi-backend
+          intake scaffolding.
+        </p>
+
+        <div class="cta-row reveal">
+          <button
+            class="btn btn-primary"
+            type="button"
+            data-scroll="#lead-form"
+          >
+            Request Private Build
+          </button>
+
+          <button class="btn btn-ghost" type="button" data-scroll="#product">
+            View Product Structure
+          </button>
+        </div>
+
+        <dl class="proof reveal">
+          <div>
+            <dt>1</dt>
+            <dd>Single-file front-end: HTML, CSS, and JavaScript combined.</dd>
+          </div>
+          <div>
+            <dt>API</dt>
+            <dd>
+              Python, TypeScript, and Java lead-intake scaffolds included.
+            </dd>
+          </div>
+          <div>
+            <dt>Score</dt>
+            <dd>
+              Conversion algorithm weights urgency, authority, consent, and
+              engagement.
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      <section
+        id="product"
+        class="section structure panel reveal"
+        aria-label="Product structure"
+      >
+        <h2>Product Structure</h2>
+        <pre>
+belfort-luxe-conversion-engine/
+  README.md
+  index.html
+  backend/
+    python/
+      app.py
+      requirements.txt
+    typescript/
+      server.ts
+      package.json
+      tsconfig.json
+    java/
+      pom.xml
+      src/
+        main/
+          java/
+            com/
+              belfortlux/
+                LeadApplication.java
+                LeadController.java</pre>
+      </section>
+
+      <section
+        id="process"
+        class="section panel reveal"
+        aria-label="Conversion process"
+      >
+        <h2>Conversion Algorithm</h2>
+        <p>
+          The front-end calculates a Belfort Conversion Score from field
+          quality, budget authority, timeline urgency, consent, message depth,
+          and engagement signals. The same scoring contract is mirrored in the
+          included Python, TypeScript, and Java backend scaffolds.
+        </p>
+      </section>
+
+      <section
+        id="lead-form"
+        class="section panel reveal"
+        aria-label="Lead intake"
+      >
+        <h2>Private Intake</h2>
+
+        <form id="leadForm" novalidate>
+          <div class="form-grid">
+            <div class="field">
+              <label for="name">Full name</label>
+              <input
+                id="name"
+                name="name"
+                type="text"
+                autocomplete="name"
+                required
+              />
+            </div>
+
+            <div class="field">
+              <label for="company">Company</label>
+              <input
+                id="company"
+                name="company"
+                type="text"
+                autocomplete="organization"
+              />
+            </div>
+
+            <div class="field">
+              <label for="email">Business email</label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autocomplete="email"
+                required
+              />
+            </div>
+
+            <div class="field">
+              <label for="budget">Budget level</label>
+              <select id="budget" name="budget">
+                <option value="0">Select budget</option>
+                <option value="1">Under $5,000</option>
+                <option value="2">$5,000 - $10,000</option>
+                <option value="3">$10,000 - $25,000</option>
+                <option value="4">$25,000 - $50,000</option>
+                <option value="5">$50,000+</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="timeline">Timeline</label>
+              <select id="timeline" name="timeline">
+                <option value="">Select timeline</option>
+                <option value="urgent">Urgent / this week</option>
+                <option value="quarter">This quarter</option>
+                <option value="month">This month</option>
+                <option value="later">Later</option>
+              </select>
+            </div>
+
+            <div class="field full">
+              <label for="message">Project goals</label>
+              <textarea id="message" name="message"></textarea>
+            </div>
+
+            <label class="checkbox full">
+              <input id="consent" name="consent" type="checkbox" />
+              I agree to be contacted about this project.
+            </label>
+          </div>
+
+          <button class="btn btn-primary" type="submit">
+            Score My Project
+          </button>
+        </form>
+
+        <output id="leadResult" class="result" aria-live="polite"></output>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>Belfort Luxe Conversion Engine</span>
+      <span>Friday, August 28, 2026</span>
+    </footer>
+
+    <script>
+      (function () {
+        "use strict";
+
+        var reduceMotion = window.matchMedia(
+          "(prefers-reduced-motion: reduce)"
+        ).matches;
+
+        var reveals = document.querySelectorAll(".reveal");
+
+        if (!reduceMotion && "IntersectionObserver" in window) {
+          var observer = new IntersectionObserver(
+            function (entries) {
+              entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                  entry.target.classList.add("visible");
+                  observer.unobserve(entry.target);
+                }
+              });
+            },
+            {
+              threshold: 0.15
+            }
+          );
+
+          reveals.forEach(function (element) {
+            observer.observe(element);
+          });
+        } else {
+          reveals.forEach(function (element) {
+            element.classList.add("visible");
+          });
+        }
+
+        var behavior = {
+          ctaClicks: 0,
+          maxScroll: 0,
+          dwellStart: Date.now()
+        };
+
+        function updateScroll() {
+          var doc = document.documentElement;
+          var max = doc.scrollHeight - window.innerHeight;
+          behavior.maxScroll =
+            max > 0 ? Math.round((window.scrollY / max) * 100) : 100;
+        }
+
+        window.addEventListener("scroll", updateScroll, { passive: true });
+        updateScroll();
+
+        document.querySelectorAll("[data-scroll]").forEach(function (button) {
+          button.addEventListener("click", function () {
+            behavior.ctaClicks += 1;
+
+            var target = document.querySelector(
+              button.getAttribute("data-scroll")
+            );
+
+            if (target) {
+              target.scrollIntoView({
+                behavior: reduceMotion ? "auto" : "smooth",
+                block: "start"
+              });
+            }
+          });
+        });
+
+        var canvas = document.getElementById("luxCanvas");
+        var ctx = canvas ? canvas.getContext("2d") : null;
+        var particles = [];
+
+        function resizeCanvas() {
+          if (!canvas) {
+            return;
+          }
+
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
+        }
+
+        function seedParticles() {
+          particles = [];
+
+          if (!canvas || reduceMotion) {
+            return;
+          }
+
+          var count = Math.min(70, Math.floor(window.innerWidth / 18));
+
+          for (var i = 0; i < count; i++) {
+            particles.push({
+              x: Math.random() * canvas.width,
+              y: Math.random() * canvas.height,
+              r: Math.random() * 2.2 + 0.4,
+              vx: (Math.random() - 0.5) * 0.16,
+              vy: (Math.random() - 0.75) * 0.22,
+              a: Math.random() * 0.32 + 0.08
+            });
+          }
+        }
+
+        function drawParticles() {
+          if (!ctx || !canvas || reduceMotion) {
+            return;
+          }
+
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          particles.forEach(function (particle) {
+            particle.x += particle.vx;
+            particle.y += particle.vy;
+
+            if (particle.y < -8) {
+              particle.y = canvas.height + 8;
+            }
+
+            if (particle.x < -8) {
+              particle.x = canvas.width + 8;
+            }
+
+            if (particle.x > canvas.width + 8) {
+              particle.x = -8;
+            }
+
+            ctx.beginPath();
+            ctx.arc(particle.x, particle.y, particle.r, 0, Math.PI * 2);
+            ctx.fillStyle = "rgba(211, 169, 79, " + particle.a + ")";
+            ctx.fill();
+          });
+
+          requestAnimationFrame(drawParticles);
+        }
+
+        window.addEventListener("resize", function () {
+          resizeCanvas();
+          seedParticles();
+        });
+
+        resizeCanvas();
+        seedParticles();
+        drawParticles();
+
+        var form = document.getElementById("leadForm");
+        var result = document.getElementById("leadResult");
+        var submitButton = form ? form.querySelector("[type=submit]") : null;
+        var emailPattern = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+
+        function clamp(value, min, max) {
+          return Math.min(max, Math.max(min, value));
+        }
+
+        function scoreLead(data) {
+          var score = 0;
+
+          if (data.name.length >= 2) {
+            score += 10;
+          }
+
+          if (data.company.length >= 2) {
+            score += 10;
+          }
+
+          if (emailPattern.test(data.email)) {
+            score += 25;
+          }
+
+          score += data.budget * 8;
+
+          var timelineScores = {
+            urgent: 20,
+            quarter: 12,
+            month: 8,
+            later: 3
+          };
+
+          score += timelineScores[data.timeline] || 0;
+          score += clamp(Math.floor(data.message.length / 10), 0, 20);
+
+          if (data.consent) {
+            score += 5;
+          }
+
+          if (behavior.maxScroll >= 75) {
+            score += 5;
+          }
+
+          if ((Date.now() - behavior.dwellStart) / 1000 >= 30) {
+            score += 5;
+          }
+
+          if (behavior.ctaClicks > 0) {
+            score += 5;
+          }
+
+          return clamp(score, 0, 100);
+        }
+
+        function tierFor(score) {
+          if (score >= 75) {
+            return "HOT";
+          }
+
+          if (score >= 45) {
+            return "WARM";
+          }
+
+          return "COLD";
+        }
+
+        async function postLead(payload) {
+          if (!("fetch" in window)) {
+            return null;
+          }
+
+          var controller = null;
+          var timeoutId = null;
+
+          if ("AbortController" in window) {
+            controller = new AbortController();
+            timeoutId = setTimeout(function () {
+              controller.abort();
+            }, 4000);
+          }
+
+          try {
+            var options = {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify(payload)
+            };
+
+            if (controller) {
+              options.signal = controller.signal;
+            }
+
+            var response = await fetch("/api/leads", options);
+
+            if (!response.ok) {
+              return null;
+            }
+
+            var data = await response.json();
+
+            if (data && typeof data.score === "number") {
+              return data;
+            }
+
+            return null;
+          } catch (error) {
+            return null;
+          } finally {
+            if (timeoutId !== null) {
+              clearTimeout(timeoutId);
+            }
+          }
+        }
+
+        if (form && result) {
+          form.addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            var elements = form.elements;
+
+            var data = {
+              name: String(elements["name"].value).trim(),
+              company: String(elements["company"].value).trim(),
+              email: String(elements["email"].value).trim(),
+              budget: parseInt(elements["budget"].value, 10) || 0,
+              timeline: String(elements["timeline"].value),
+              message: String(elements["message"].value).trim(),
+              consent: Boolean(elements["consent"].checked)
+            };
+
+            if (data.name.length < 2 || !emailPattern.test(data.email)) {
+              result.className = "result";
+              result.textContent =
+                "Enter a valid name and business email to unlock the conversion score.";
+              return;
+            }
+
+            if (submitButton) {
+              submitButton.disabled = true;
+            }
+
+            try {
+              var localScore = clamp(scoreLead(data), 0, 100);
+              var localTier = tierFor(localScore);
+
+              result.className = "result " + localTier.toLowerCase();
+              result.textContent =
+                "Local Conversion Score: " +
+                localScore +
+                " / 100. Lead temperature: " +
+                localTier +
+                ".";
+
+              var server = await postLead(data);
+
+              if (server) {
+                var apiScore = clamp(server.score, 0, 100);
+                var apiTier = tierFor(apiScore);
+
+                result.className = "result " + apiTier.toLowerCase();
+                result.textContent =
+                  "Local Conversion Score: " +
+                  localScore +
+                  " / 100. " +
+                  "API Conversion Score: " +
+                  apiScore +
+                  " / 100. " +
+                  "Lead temperature: " +
+                  apiTier +
+                  ".";
+              }
+            } finally {
+              if (submitButton) {
+                submitButton.disabled = false;
+              }
+            }
+          });
+        }
+      })();
+    </script>
+  </body>
+</html>
