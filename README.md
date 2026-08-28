@@ -4,8 +4,8 @@ A luxury, high-conversion front-end system paired with multi-language backend le
 
 ## Product structure
 
-```text
-belfort-luxe-conversion-engine/
+```
+levenshtein-distance/
   README.md
   index.html
   backend/
